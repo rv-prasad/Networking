@@ -4,3 +4,35 @@ We have created DMVPN Tunnel10 <192.168.1.0/24> with Hub-1 and Tunnel20 with Hub
 There is BGP peering over Tunnel interfaces.
 We have IPKAMP configured using IKEv1 with Policy and IPsec to use this Policy.
 Tunnel is protected using IPsec Policy created.
+
+Configuring Keyring
+---------------------
+crypto keyring KEYRING vrf INET
+ pre-shared-key address 0.0.0.0 0.0.0.0 key Cisco123
+
+configuring ISAKMP Policy
+---------------------------
+crypto isakmp policy 10
+ encryption aes
+ hash sha
+ authentication pre-share
+ group 14
+
+Configuring ISAKMP Profile
+--------------------------
+crypto isakmp profile ISAKMP
+   vrf INET
+   keyring KEYRING
+   match identity address 0.0.0.0 INET
+
+
+Configuring Crypto Transformset
+---------------------------------
+crypto ipsec transform-set IPSEC_TRANS_SET esp-aes 192 esp-sha-hmac
+ mode tunnel
+
+Configuring IPSec Profile
+---------------------------------
+crypto ipsec profile IPSEC_PROFILE
+ set transform-set IPSEC_TRANS_SET
+ set isakmp-profile ISAKMP
