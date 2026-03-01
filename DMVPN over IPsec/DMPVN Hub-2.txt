@@ -1,0 +1,242 @@
+Hub-2#terminal len 0
+Hub-2#show run
+Building configuration...
+
+Current configuration : 2183 bytes
+!
+! Last configuration change at 12:23:34 UTC Sun Mar 1 2026
+!
+version 17.16
+service timestamps debug datetime msec
+service timestamps log datetime msec
+!
+hostname Hub-2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition INET
+ rd 2:1
+ !
+ address-family ipv4
+ exit-address-family
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+login on-success log
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+memory free low-watermark processor 79983
+!
+!
+spanning-tree mode rapid-pvst
+!
+!
+!
+!
+!
+!
+!
+! 
+crypto keyring KEYRING vrf INET 
+ pre-shared-key address 0.0.0.0 0.0.0.0 key Cisco123
+!
+!
+!
+!
+!
+!
+!
+crypto isakmp policy 10
+ encryption aes
+ hash sha
+ authentication pre-share
+ group 14
+crypto isakmp profile ISAKMP
+   vrf INET
+   keyring KEYRING
+   match identity address 0.0.0.0 INET
+!
+!
+crypto ipsec transform-set IPSEC_TRANS_SET esp-aes 192 esp-sha-hmac 
+ mode tunnel
+!
+crypto ipsec profile IPSEC_PROFILE
+ set transform-set IPSEC_TRANS_SET 
+ set isakmp-profile ISAKMP
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 22.22.22.22 255.255.255.255
+!
+interface Tunnel20
+ ip address 192.168.2.1 255.255.255.0
+ no ip redirects
+ ip nhrp network-id 2
+ ip nhrp redirect
+ tunnel source Ethernet0/0
+ tunnel mode gre multipoint
+ tunnel vrf INET
+ tunnel protection ipsec profile IPSEC_PROFILE shared
+!
+interface Tunnel100
+ ip address 10.0.0.2 255.255.255.252
+ tunnel source Ethernet0/0
+ tunnel destination 1.1.1.1
+ tunnel vrf INET
+ tunnel protection ipsec profile IPSEC_PROFILE shared
+!
+interface Ethernet0/0
+ vrf forwarding INET
+ ip address 1.1.1.2 255.255.255.0
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+router bgp 22
+ bgp log-neighbor-changes
+ network 22.22.22.22 mask 255.255.255.255
+ neighbor 10.0.0.1 remote-as 11
+ neighbor 192.168.2.2 remote-as 33
+ neighbor 192.168.2.3 remote-as 44
+ neighbor 192.168.2.4 remote-as 55
+!
+ip forward-protocol nd
+ip forward-protocol udp
+!
+!
+ip http server
+ip http secure-server
+ip ssh bulk-mode 131072
+no logging btrace
+!
+!
+!
+control-plane
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input ssh
+!
+!
+!
+!
+end
+
+Hub-2#exit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Hub-2 con0 is now available
+
+
+
+
+
+Press RETURN to get started.
+
