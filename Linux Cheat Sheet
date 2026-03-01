@@ -1,0 +1,221 @@
+Useful Linux Command
+--------------------
+
+Command					Description
+--------				----------------------
+ps 				          -> 	to see the process id
+kill <pid> 			    -> 	to kill any process ID
+sudo su 		        -> 	Enable into super user mode
+cd .. 				      -> 	to come one directory level up
+cd\ 				        ->	to come to root directory
+ls -la 				      -> 	to list all files along with directory
+nano <file_name> 		->	to enable to nano editor and save the files
+dir 				        -> 	to list all the directory
+$TERM 				      -> 	To see the Terminal color of the system (if it returns vt220 then the color scheme is of white only)
+export TERM=xterm-256color 	-> 	To temporarily change the color scheme of terminal to show different color. This will show directory in blue/nano editor will show codes in color like normal editor
+
+sudo apt update 		-> 	This is to update the ubuntu termnial
+
+Alt+Y inside the Nano Editor 	-> 	It will enable/ disable colored view of codes in python editor
+apt install bat 		          -> 	bat is designed to be a "cat clone with wings". It's a modern utility that offers beautiful syntax highlighting for many languages.
+batcat <filename> 		        -> 	It is used to open the filename with batcat command. Again use Q to exit the file system
+
+apt install python3.12-venv 	-> 	To install the python3.12 virtual environment module in ubuntu
+sudo apt install python3-pip 	-> 	To install python pip (Pip Installs Packages)
+python3 -m venv myvenv 		    -> 	This ensure that you are enabling -m module venv under directory myvenv.
+source myvenv/bin/activate 	  -> 	This is used to activate the virtual environment. Above command create activate file in /bin/ directory of /myvenv
+                                  This is the only command needed when you want to run activate the virtual environment next time.
+
+df -h 			                           	->  	df (disk free) command in your terminal. The most useful option is -h, which provides the output in a human-readable format.	
+du -sh /home/cisco/net-threat-detection -> If you want to know how much space a particular folder use the du (disk usage) command with the summarize (-s) and human-readable (-h) options
+
+
+clear/Ctrl+L/reset		                  ->	Common terminal display issue, often called "text wrapping" or a "display glitch,
+
+Category- Navigation
+---------------------	
+Command			        Description
+pwd			            Print working directory (shows your current location)
+ls			            List files and directories in the current location
+ls -la			        List all files (including hidden .files) in a detailed (l) human-readable (h implied here, or use -lah) format
+cd directory_name	  Change directory into a specific folder
+cd ..			          Move up one directory level
+cd ~ or cd		      Return to your home directory
+
+File Management	
+----------------
+touch file.txt		        Create an empty file named file.txt
+mkdir dir_name		        Make a new directory (folder)
+cp source destination	    Copy a file or directory
+mv old_name new_name	    Move or rename a file or directory
+rm file.txt		            Remove (delete) a file
+rm -r dir_name		        Remove a directory and all its contents recursively (use with caution!)
+
+Viewing Files	
+--------------
+cat file.txt		    Display the catenated contents of a file to the terminal
+nano file.txt		    Open a file in the user-friendly Nano text editor
+less file.txt		    View file contents one page at a time (handy for large files)
+tail -f file.log	  Display the tail (last 10 lines by default) of a file, with -f "following" new incoming lines in real-time
+
+
+Utilities/System	
+-----------------
+grep "pattern" file.txt	          Search for a specific text pattern within a file
+df -h			                        Show disk free space in a human-readable format
+top			                          Display running processes and system resource usage in real-time
+sudo command		Superuser do      run a command with administrative privileges
+man command		                    Open the manual page (help file) for a command
+
+
+
+IP related Commands for Linux
+------------------------------
+Command				Description
+------------			--------------------
+
+ip addr show or ip a		  ->    Displays all network interfaces and their IPv4 and IPv6 addresses. Shows details for a specific interface, e.g., eth0 (wired) or wlan0 (wireless).
+ip route show default		  ->    Shows the default route and gateway IP address.
+
+curl ifconfig.me or dig +short myip.opendns.com @resolver1.opendns.com	->  Queries an external service to find your public IP address.
+
+hostname -I			Prints all locally configured IP addresses of the host machine.
+
+
+--------------------------------------------
+Command to Set IP address on Linux machine
+--------------------------------------------
+sudo ip addr add 192.168.1.100/24 dev eth0		      ->    Setting IP address on Linux 
+sudo ip addr del 192.168.1.100/24 dev eth0		      ->    Delete an IP address
+sudo ip link set dev eth0 up				                ->    Brining an Interface up
+sudo ip link set dev eth0 down				              ->    Bringing an interface down
+systemd-resolve --status				                    ->    Commands to check DNS on Linux System
+ip route						                                ->    to see the current routing table used by Linux
+ip route get 8.8.8.8					                      ->    to check route towards IP 8.8.8.8
+
+sudo ip route add default via <gateway_ip_address> dev <interface_name>
+ip route add default dev eth0
+ip route default                                    ->    To see current ip default Config
+
+
+
+Permanent IP Configuration (Using Netplan on Ubuntu)
+-----------------------------------------------------
+Edit the Netplan configuration file: These files are located in /etc/netplan/. The file name might be 00-installer-config.yaml or 50-cloud-init.yaml
+
+yaml
+----
+network:Flow-Server:/home/cisco/net-threat-detection# cat /etc/netplan/50-cloud-init.yaml
+  version: 2
+  ethernets:
+    ens2:
+      dhcp4: no
+      addresses: [192.168.87.100/24]
+      routes:
+        - to: default
+          via: 192.168.87.1
+      nameservers:
+          addresses: [8.8.8.8,8.8.4.4]
+    ens3:
+      dhcp4: no
+      addresses: [10.10.0.10/24]
+
+
+sudo netplan try - Apply the changes and test the configuration
+sudo netplan apply - to apply changes
+
+Command to change DNS servers
+------------------------------
+cat /etc/resolv.conf 		        ->      	To Check DNS server config
+nano /etc/resolv.conf
+
+#updating DNS servers
+
+nameserver 103.107.9.6
+nameserver 103.107.9.6
+options edns0 trust-ad
+search .
+
+
+
+Command							                                         Description
+--------------						                                    -------------------
+sudo iptables -t nat -L -v -n				                        ->    Lists all rules in the nat table (-t nat), with verbosity (-v) and numeric IPs (-n).
+sudo iptables -t nat -L POSTROUTING -n			                ->    Lists rules only in the POSTROUTING chain (used for source NAT/Masquerade).
+sudo iptables-save					                                ->    Dumps all tables (filter, nat, mangle, etc.) in a portable format.
+`echo 1	sudo tee /proc/sys/net/ipv4/ip_forward` 	          ->    Enable IP Forwarding (required for routing/NAT)
+
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE 	->   Sets up common Source NAT (SNAT) to share an internet connection on interface eth0.
+
+sudo iptables -t nat -F					                            ->   Flushes (deletes) all rules in the nat table chains.
+
+
+
+Enabling SSH on Ubuntu Server
+------------------------------
+sudo apt update
+sudo apt install openssh-server
+sudo systemctl status ssh				->  Verify the SSH service is running
+sudo systemctl start ssh				-> Starting SSH service 
+sudo systemctl enable ssh				->  Enable the service to start automatically on boot
+sudo ufw allow ssh					    ->  Allow SSH through the firewall Uncomplicated Firewall (UFW) is enabled on your Ubuntu VM, you must allow SSH traffic (which uses TCP port 22 by default)
+
+sudo ufw status						     ->  Check the firewall status (optional)
+
+
+Hostname Related Command in Linux
+-------------------------------
+hostnamectl					                        ->	verify your current hostname
+sudo hostnamectl set-hostname new-hostname	->	Change the Hostname Permanently
+
+
+
+Configuring routing on Ubuntu Nodes
+-------------------------------------
+sudo apt install frr frr-pythontools		->	Install the FRR package 
+sudo nano Install the FRR package 		  ->	dit the /etc/frr/daemons file to tell FRR which specific protocols you want to run (e.g., ospfd, bgpd). Change the line for the desired daemon from no to yes.
+
+sudo sysctl -w net.ipv4.ip_forward=1		->	Enable IP Forwarding in Kernel to forward traffic between different networks
+sudo systemctl restart frr			        -> 	Restart the service
+
+Configure the protocols: You configure FRR using a familiar, Cisco-like command-line interface (CLI) tool called vtysh
+-----------------------------------------------------
+sudo vtysh
+configure terminal
+# Example: Start OSPF configuration
+router ospf
+network 192.168.1.0/24 area 0.0.0.0
+# ... and so on
+
+Command to check and validate the routing
+root@NetFlow-Server:/home/cisco# sudo vtysh
+NetFlow-Server# show ip ospf neighbor
+
+Neighbor ID     Pri State           Up Time         Dead Time Address         Interface                        RXmtL RqstL DBsmL
+10.10.1.1         1 Full/Backup     12m59s            37.743s 10.10.0.1       ens3:10.10.0.10                      0     0     0
+10.2.2.1          1 Full/DROther    7m59s             35.671s 10.10.0.2       ens3:10.10.0.10                      0     0     0
+10.3.3.3          1 Full/DROther    7m09s             38.036s 10.10.0.3       ens3:10.10.0.10                      0     0     0
+
+NetFlow-Server# show ip route
+Codes: K - kernel route, C - connected, S - static, R - RIP,
+       O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+K>* 0.0.0.0/0 [0/0] via 10.10.0.1, ens3, 00:17:04
+K * 0.0.0.0/0 [0/100] via 192.168.87.1, ens2, src 192.168.87.23, 00:18:06
+O>* 10.1.1.1/32 [110/2] via 10.10.0.1, ens3, weight 1, 00:11:16
+O>* 10.2.2.1/32 [110/2] via 10.10.0.2, ens3, weight 1, 00:07:59
+O>* 10.3.3.3/32 [110/2] via 10.10.0.3, ens3, weight 1, 00:07:09
+O   10.10.0.0/24 [110/1] is directly connected, ens3, weight 1, 00:17:04
+C>* 10.10.0.0/24 is directly connected, ens3, 00:17:04
+K>* 103.107.9.6/32 [0/100] via 192.168.87.1, ens2, src 192.168.87.23, 00:18:06
+K>* 103.155.73.14/32 [0/100] via 192.168.87.1, ens2, src 192.168.87.23, 00:18:06
+O   192.168.87.0/24 [110/1] is directly connected, ens2, weight 1, 00:18:06
+C>* 192.168.87.0/24 [0/100] is directly connected, ens2, 00:18:06
+K>* 192.168.87.1/32 [0/100] is directly connected, ens2, 00:18:06
+NetFlow-Server#
+
+
